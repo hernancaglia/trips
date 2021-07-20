@@ -51,8 +51,8 @@ def get_trips():
 
 
 @app.route('/load_bigtrips')
-def load_bigtrips():
-    # Load test_bigtrips table with 1 million rows 
+def load_raw_bigtrips():
+    # Load test_raw_bigtrips table with 1 million rows 
     df = etl.get_data()
 
     for i in range(11):
@@ -63,16 +63,16 @@ def load_bigtrips():
         df.write.format('jdbc').options(
             url='jdbc:mysql://database:3306/backend',
             driver='com.mysql.cj.jdbc.Driver',
-            dbtable='test_bigtrips',
+            dbtable='test_raw_bigtrips',
             user='root',
             password='root').mode('append').save()
     
-    return jsonify('1,103,500 rows inserted')
+    return jsonify('1,103,500 rows inserted into test_raw_bigtrips')
 
 
 @app.route('/test_bigtrips')
 def test_bigtrips():
-    # Get 1 million rows and return total count
+    # Get 1 million rows from database
     spark = SparkSession \
         .builder \
         .config("spark.driver.memory", "15g") \
@@ -87,9 +87,16 @@ def test_bigtrips():
         .option("password", "root") \
         .load()
 
-    df_count = df.count()
+    df = etl.clean_data(df)
 
-    return jsonify(df_count)
+    df.write.format('jdbc').options(
+        url='jdbc:mysql://database:3306/backend',
+        driver='com.mysql.cj.jdbc.Driver',
+        dbtable='bigtrips',
+        user='root',
+        password='root').mode('append').save()
+
+    return jsonify('test_bigtrips loaded')
 
 
 @socketio.on('connect')  # BEING USED
