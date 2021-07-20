@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+        <title>Trips ETL</title>
+    </head>
+
+    <body>
+        <h1>Trips ETL</h1>
+        <form id="etlForm">
+            <input type="submit" id="startETL" name="startETL" value="Start ETL">
+        </form>
+        <br>
+        <div><ol id="resultsETL"></ol></div>
+        <hr>
+
+        <script>
+            $(document).ready(function() {
+                var namespace1 = '/etl';
+                var socket1 = io.connect('http://' + document.domain + ':' + location.port + namespace1);
+
+                socket1.on('connect', function() {
+                    socket1.emit('join_etl');
+                });
+
+                socket1.on('status', function(data) {
+                    if(data.msg == 'End') {
+                        $('#startETL').show();
+                    }
+                });
+
+                socket1.on('msg', function(data) {
+                    $('#resultsETL').append('<li>' + data.msg + '</li>');
+                });
+
+                $('#startETL').click(function(e) {
+                    e.preventDefault();
+                    $('#startETL').hide();
+    
+                    $.ajax({
+                        type: 'POST',
+                        url: '/run_etl',
+                        data: {},
+                        success: function(data) {}
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

@@ -1,0 +1,72 @@
+version: '3'
+services:
+    api:
+        container_name: trips_api
+
+        build:
+            context: ./api
+            dockerfile: Dockerfile  
+
+        ports:
+            - "5000:2000"
+        
+        volumes:
+            - ${PWD}:/trips  # so that I don't need to rebuild while developing
+        
+        env_file:
+            - ./api/.env
+            
+        links:
+            - redis
+            - database
+
+        command: python app.py
+
+        depends_on:
+            - redis
+            - database
+
+    redis:
+        container_name: redis
+        hostname: redis
+        image: redis
+        ports:
+            - "6379:6379"
+
+    worker:
+        container_name: worker
+        build:
+            context: ./api
+        hostname: worker
+        entrypoint: celery
+        command: -A etl.celery worker --loglevel=INFO
+        volumes:
+            - ${PWD}:/trips
+        links:
+            - redis
+            - database
+        depends_on:
+            - redis
+            - database
+        env_file: 
+            - ./api/.env
+            
+    database:
+        container_name: trips_db
+
+        build:
+            context: ./db
+            dockerfile: Dockerfile-db                        
+
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_USER=testuser
+            - MYSQL_PASSWORD=admin123
+            - MYSQL_DATABASE=backend
+            - MYSQL_ROOT_HOST=%
+
+        volumes:
+            - "./db/init.sql:/docker-entrypoint-initdb.d/init.sql"
+
+        ports:
+            - "3306:3306"
