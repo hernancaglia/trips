@@ -6,7 +6,7 @@ Data Engineering project using trips data
 
 Install Docker and Docker Compose
 
-Run project:
+Run project (in Bash):
 
 ```bash
 $ docker-compose up
