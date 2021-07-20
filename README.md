@@ -46,7 +46,7 @@ http://localhost:5000/weekly-avg?search=box&value={"x_lower":7,"x_upper":8.5,"y_
 
 ## Test using 1 million rows
 
-Load test_raw_bigtrips table with 1.024.000 rows (this can take about 5 minutes):
+Load test_raw_bigtrips table with 1.024.000 rows (this can take about 5 minutes, or more on slower PC's):
 
 http://localhost:5000/load_bigtrips
 
