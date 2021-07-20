@@ -44,3 +44,31 @@ Example using coordinates:
 
 http://localhost:5000/weekly-avg?search=box&value={"x_lower":7, "x_upper":8.5, "y_lower":44, "y_upper":47}
 
+## Test using 1 million rows
+
+Load test_raw_bigtrips table with 1.024.000 rows (this can take about 5 minutes):
+
+http://localhost:5000/load_bigtrips
+
+Run the test ETL (about 2 minutes):
+
+http://localhost:5000/test_bigtrips
+
+After receiving the 'test_bigtrips loaded' message, the clean data is available in the bigtrips table:
+```bash
+mysql> show tables;
++-------------------+
+| Tables_in_backend |
++-------------------+
+| bigtrips          |
+| test_bigtrips     |
+| trips             |
++-------------------+
+
+mysql> select count(*) from bigtrips;
++----------+
+| count(*) |
++----------+
+|  1024000 |
++----------+
+```
