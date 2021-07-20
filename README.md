@@ -42,7 +42,7 @@ http://localhost:5000/weekly-avg?search=region&value=hamburg
 
 Example using coordinates:
 
-http://localhost:5000/weekly-avg?search=box&value={"x_lower":7, "x_upper":8.5, "y_lower":44, "y_upper":47}
+http://localhost:5000/weekly-avg?search=box&value={"x_lower":7,"x_upper":8.5,"y_lower":44,"y_upper":47}
 
 ## Test using 1 million rows
 
