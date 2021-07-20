@@ -82,7 +82,7 @@ def test_bigtrips():
     df = spark.read \
         .format("jdbc") \
         .option("url", "jdbc:mysql://database:3306/backend") \
-        .option("dbtable", "test_bigtrips") \
+        .option("dbtable", "test_raw_bigtrips") \
         .option("user", "root") \
         .option("password", "root") \
         .load()
